@@ -12,7 +12,7 @@ message HelloResponse {
   string greeting = 1;
 }
 
-//логическое объединение вызываемых процедур - это сервис
+//здесь уже фигурирует стрим вместо одного сбщ
 service GreetingService {
-  rpc greeting(HelloRequest) returns (HelloResponse);
+  rpc greeting(HelloRequest) returns (stream HelloResponse);
 }

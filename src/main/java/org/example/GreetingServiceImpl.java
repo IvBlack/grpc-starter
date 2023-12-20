@@ -1,5 +1,6 @@
 package org.example;
 
+
 import com.generated.grpc.GreetingServiceGrpc;
 import com.generated.grpc.GreetingServiceOuterClass;
 import io.grpc.stub.StreamObserver;
@@ -7,17 +8,27 @@ import io.grpc.stub.StreamObserver;
 public class GreetingServiceImpl extends GreetingServiceGrpc.GreetingServiceImplBase {
 @Override
 public void greeting(GreetingServiceOuterClass.HelloRequest request,
-        StreamObserver<GreetingServiceOuterClass.HelloResponse> responseObserver) {
-        //посмотрим, что пришло от клиента
-        System.out.println(request);
+                     StreamObserver<GreetingServiceOuterClass.HelloResponse> responseObserver) {
 
-        //отдадим ответ клиенту
-        //паттерн Builder соберет ответ сервера по цепочке, вызывая setGreeting нужное кол-во раз
-        GreetingServiceOuterClass.HelloResponse response = GreetingServiceOuterClass
-        .HelloResponse.newBuilder().setGreeting("Hallo from server!, " + request.getName())
-        .build();
+        /*
+        В цикле на каждой i усыпляется на время поток,
+        формируется стрим из респонсов из 10 тыс.элементов
+        */
 
-        responseObserver.onNext(response);
+        for(int i=0; i < 10000; i++) {
+                try {
+                        Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                }
+
+                GreetingServiceOuterClass.HelloResponse response = GreetingServiceOuterClass
+                        .HelloResponse.newBuilder().setGreeting("Hallo from server!, " + request.getName())
+                        .build();
+
+                responseObserver.onNext(response);
+        }
+
         responseObserver.onCompleted();
         }
 }
